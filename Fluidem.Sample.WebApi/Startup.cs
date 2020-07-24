@@ -30,7 +30,7 @@ namespace Fluidem.Sample.WebApi
         {
             services.AddControllers();
             var stringConnection = Configuration.GetSection("DBInfo");
-            services.AddFluidem<PostgressFluidem>(options =>
+            services.AddFluidem<PostgressFluidem>( options =>
             {
                 options.ConnectionString = stringConnection.GetValue<string>("ConnectionString");
                 options.TableName = "fluidem_error";

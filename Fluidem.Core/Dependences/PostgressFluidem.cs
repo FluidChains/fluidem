@@ -6,28 +6,30 @@ using System.Threading.Tasks;
 using Dapper;
 using Fluidem.Core.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Options;
 // using Microsoft.AspNetCore.Builder;
 using Npgsql;
+using Options = Fluidem.Core.Models.Options;
 
 namespace Fluidem.Core
 {
     public class PostgressFluidem: ICoreFluidem
     {
         private NpgsqlConnection _dbConnection;
-        private Options _options;
+        private IOptions<Options> _options;
         
-        private PostgressFluidem(Options options)
+        public PostgressFluidem(IOptions<Options> options)
         {
             _options = options;
-            _dbConnection = new NpgsqlConnection(_options.ConnectionString);
+            _dbConnection = new NpgsqlConnection(_options.Value.ConnectionString);
+            CreateTable();
         }
 
         public async Task SaveExceptionAsync(DetailError exSave)
         {
-            Console.Write(exSave.ToString());
             await _dbConnection.ExecuteScalarAsync<int>(
-                $@"INSERT INTO {_options.TableName} (ErrorId, Host, Type, Message, StatusCode) 
-                        VALUES(@Uuid, @Host, @Type, @Message, @StatusCode)", exSave);
+                $@"INSERT INTO {_options.Value.TableName} (id, host, exception_code, status_code, message, stacktrace) 
+                        VALUES(@Id, @Host, @ExceptionType, @StatusCode, @Message, @StackTrace)", exSave);
         }
 
         public void CreateTable()
@@ -35,12 +37,13 @@ namespace Fluidem.Core
             using (_dbConnection)
             {
                 _dbConnection.Open();
-                using (var tblCheck = Commands.CheckTable(_options.TableName))
+                using (var tblCheck = Commands.CheckTable(_options.Value.TableName))
                 {
                     tblCheck.Connection = _dbConnection;
                     var exists = (bool) tblCheck.ExecuteScalar();
+                    Console.WriteLine(exists);
                     if (exists) return;
-                    using var createAt = Commands.CreateTable(_options.TableName);
+                    using var createAt = Commands.CreateTable(_options.Value.TableName);
                     createAt.Connection = _dbConnection;
                     createAt.ExecuteScalar();
                 }

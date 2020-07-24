@@ -24,17 +24,18 @@ namespace Fluidem.Core
             queryCmd.CommandText = $@"CREATE SEQUENCE Fluidem_Error_SEQUENCE;
                                         CREATE TABLE {nameTable}
                                         (
-                                            ErrorId		UUID NOT NULL,
-                                            Host 		VARCHAR(50) NOT NULL,
-                                            Type		VARCHAR(100) NOT NULL,
-                                            Message		VARCHAR(500) NOT NULL,
-                                            StatusCode	INT NOT NULL,
-                                            TimeUtc		TIMESTAMP NOT NULL
+                                            id		        UUID NOT NULL,
+                                            host 		    VARCHAR(50) NOT NULL,
+                                            exception_type	VARCHAR(100) NOT NULL,
+                                            status_code		VARCHAR(500) NOT NULL,
+                                            message	        INT NOT NULL,
+                                            stacktrace		VARCHAR(500) NOT NULL,
+                                            timeUtc		    TIMESTAMP NOT NULL,
                                         );
 
-                                        ALTER TABLE {nameTable} ADD CONSTRAINT PK_FLUIDEM_Error PRIMARY KEY (ErrorId);
+                                        ALTER TABLE {nameTable} ADD CONSTRAINT PK_FLUIDEM_Error PRIMARY KEY (id);
 
-                                        CREATE INDEX IX_FLUIDEM_Error_App_Time_Seq ON FLUIDEM_Error USING BTREE
+                                        CREATE INDEX IX_FLUIDEM_Error_App_Time_Seq ON {nameTable} USING BTREE
                                         (
                                             TimeUtc       DESC,
                                         );

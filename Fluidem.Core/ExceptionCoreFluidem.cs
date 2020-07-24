@@ -23,9 +23,9 @@ namespace Fluidem.Core
                         //logger.LogError($"{contextFeature.Error}");
                         var obj = new DetailError()
                         {
-                            Uuid = Guid.NewGuid().ToString(),
+                            Id = Guid.NewGuid().ToString(),
                             Host = context.Request.Host.ToString(),
-                            Type = context.GetType().ToString(),
+                            ExceptionType = context.GetType().ToString(),
                             StatusCode = context.Response.StatusCode,
                             Message = contextFeature.Error.Message,
                             StackTrace = contextFeature.Error.StackTrace
