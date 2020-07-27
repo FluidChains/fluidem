@@ -1,17 +1,32 @@
-﻿using System;
+using System;
 using System.Net;
 using Fluidem.Core.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace Fluidem.Core
 {
-    public static class ExceptionCoreFluidem
+    public static class BuildFluidem
     {
+        public static IServiceCollection AddFluidem<T>(this IServiceCollection services, Action<FluidemOptions> options) 
+            where T : class, IProvider
+        {
+            var build = services.ConfigureFluidem<T>();
+            return build.Configure(options);
+        }
+        
+        private static IServiceCollection ConfigureFluidem<T>(this IServiceCollection services) 
+            where T : class, IProvider
+        {
+            return services.AddSingleton<T>();
+        }
+        
         public static void UseFluidem(this IApplicationBuilder app)
         {
+            var provider = app.ApplicationServices.GetService<IProvider>();
+            provider.BootstrapProvider();
+            
             app.UseExceptionHandler(appError =>
             {
                 appError.Run(async context =>
@@ -20,8 +35,7 @@ namespace Fluidem.Core
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
-                        //logger.LogError($"{contextFeature.Error}");
-                        var obj = new DetailError()
+                        var detailError = new DetailError
                         {
                             Id = Guid.NewGuid().ToString(),
                             Host = context.Request.Host.ToString(),
@@ -30,11 +44,11 @@ namespace Fluidem.Core
                             Message = contextFeature.Error.Message,
                             StackTrace = contextFeature.Error.StackTrace
                         };
-                        var middleware = context.RequestServices.GetService<PostgressFluidem>();
-                        await middleware.SaveExceptionAsync(obj);
+                        var middleware = context.RequestServices.GetService<IProvider>();
+                        await middleware.SaveExceptionAsync(detailError);
                     }
                 });
             });
         }
     }
-}
+}    

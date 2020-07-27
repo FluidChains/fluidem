@@ -1,4 +1,5 @@
 using Fluidem.Core;
+using Fluidem.Providers.Postgresql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,7 @@ namespace Fluidem.Sample.WebApi
         {
             services.AddControllers();
             var stringConnection = Configuration.GetSection("DBInfo");
-            services.AddFluidem<PostgressFluidem>( options =>
+            services.AddFluidem<PostpresqlProvider>(options =>
             {
                 options.ConnectionString = stringConnection.GetValue<string>("ConnectionString");
             });
@@ -36,11 +37,7 @@ namespace Fluidem.Sample.WebApi
             }
 
             app.UseFluidem();
-            /*app.Run(async context =>
-            {
-                await context.Response.WriteAsync("OK WORKS");
-            });*/
-            
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

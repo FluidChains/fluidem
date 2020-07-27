@@ -1,4 +1,4 @@
-namespace Fluidem.Core
+namespace Fluidem.Core.Extensions
 {
     public static class StringExtensions
     {

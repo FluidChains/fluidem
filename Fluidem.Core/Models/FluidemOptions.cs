@@ -1,8 +1,6 @@
-using System;
-
 namespace Fluidem.Core.Models
 {
-    public class Options
+    public class FluidemOptions
     {
         public string UrlQueryError { get; set; }
         public string LogPath { get; set; }

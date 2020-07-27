@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace Fluidem.Core
+namespace Fluidem.Providers.Postgresql
 {
     public static class Commands
     {
