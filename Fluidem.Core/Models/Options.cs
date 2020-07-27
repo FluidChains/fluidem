@@ -8,6 +8,6 @@ namespace Fluidem.Core.Models
         public string LogPath { get; set; }
         public bool SaveHeaders { get; set; }
         public string ConnectionString { get; set; }
-        public string TableName { get; set; }
+        public string TableName { get; set; } = "error_log";
     }
 }
