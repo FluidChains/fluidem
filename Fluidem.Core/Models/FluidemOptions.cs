@@ -2,10 +2,9 @@ namespace Fluidem.Core.Models
 {
     public class FluidemOptions
     {
-        public string UrlQueryError { get; set; }
-        public string LogPath { get; set; }
+        public string ErrorLogApiUrl { get; set; } = "api/error-log";
+        public string ErrorLogTableName { get; set; } = "error_log";
+        public string ErrorLogFilePath { get; set; }
         public bool SaveHeaders { get; set; }
-        public string ConnectionString { get; set; }
-        public string TableName { get; set; } = "error_log";
     }
 }

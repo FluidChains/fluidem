@@ -1,3 +1,4 @@
+using System.Data;
 using Fluidem.Core;
 using Fluidem.Providers.Postgresql;
 using Microsoft.AspNetCore.Builder;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
 
 namespace Fluidem.Sample.WebApi
 {
@@ -21,11 +23,9 @@ namespace Fluidem.Sample.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            var stringConnection = Configuration.GetSection("DBInfo");
-            services.AddFluidem<PostpresqlProvider>(options =>
-            {
-                options.ConnectionString = stringConnection.GetValue<string>("ConnectionString");
-            });
+            var appConfig = Configuration.GetSection("AppConfig").Get<AppConfig>();
+            services.AddTransient<IDbConnection>(_ => new NpgsqlConnection(appConfig.ConnectionString));
+            services.AddFluidem<PostgresqlProvider>(options => { });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

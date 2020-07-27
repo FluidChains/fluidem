@@ -4,28 +4,22 @@ using Fluidem.Core.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Fluidem.Core
 {
-    public static class BuildFluidem
+    public static class Builder
     {
         public static IServiceCollection AddFluidem<T>(this IServiceCollection services, Action<FluidemOptions> options) 
             where T : class, IProvider
         {
-            var build = services.ConfigureFluidem<T>();
+            var build = services.AddSingleton<IProvider, T>();
             return build.Configure(options);
-        }
-        
-        private static IServiceCollection ConfigureFluidem<T>(this IServiceCollection services) 
-            where T : class, IProvider
-        {
-            return services.AddSingleton<T>();
         }
         
         public static void UseFluidem(this IApplicationBuilder app)
         {
-            var provider = app.ApplicationServices.GetService<IProvider>();
-            provider.BootstrapProvider();
+            app.ApplicationServices.GetService<IProvider>().BootstrapProvider();
             
             app.UseExceptionHandler(appError =>
             {
@@ -35,17 +29,26 @@ namespace Fluidem.Core
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
-                        var detailError = new DetailError
+                        var detailError = new ErrorDetail
                         {
-                            Id = Guid.NewGuid().ToString(),
+                            Id = Guid.NewGuid(),
                             Host = context.Request.Host.ToString(),
                             ExceptionType = context.GetType().ToString(),
                             StatusCode = context.Response.StatusCode,
                             Message = contextFeature.Error.Message,
-                            StackTrace = contextFeature.Error.StackTrace
+                            StackTrace = contextFeature.Error.StackTrace,
+                            TimeUtc = DateTime.UtcNow
                         };
-                        var middleware = context.RequestServices.GetService<IProvider>();
-                        await middleware.SaveExceptionAsync(detailError);
+                        var provider = context.RequestServices.GetService<IProvider>();
+                        try
+                        {
+                            await provider.SaveExceptionAsync(detailError);
+                        }
+                        catch (Exception e)
+                        {
+                            var logger = context.RequestServices.GetService<ILogger<IProvider>>();
+                            logger.LogError($"Error saving exception: {e.Message}", e);
+                        }
                     }
                 });
             });

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fluidem.Core.Models;
 
@@ -6,7 +8,8 @@ namespace Fluidem.Core
     public interface IProvider
     {
         public void BootstrapProvider();
-        public Task SaveExceptionAsync(DetailError e);
-        public Task<DetailError> GetExceptionAsync(string uid);
+        public Task SaveExceptionAsync(ErrorDetail e);
+        public Task<IEnumerable<ErrorDetail>> GetExceptionsAsync();
+        public Task<ErrorDetail> GetExceptionAsync(Guid id);
     }
 }

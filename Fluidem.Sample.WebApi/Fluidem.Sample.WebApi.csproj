@@ -5,9 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Fluidem.Core\Fluidem.Core.csproj" />
-      <ProjectReference Include="..\Fluidem.Providers.Postgresql\Fluidem.Providers.Postgresql.csproj" />
+        <PackageReference Include="Npgsql" Version="4.1.3.1" />
     </ItemGroup>
-
-
+    
+    <ItemGroup>
+        <ProjectReference Include="..\Fluidem.Core\Fluidem.Core.csproj" />
+        <ProjectReference Include="..\Fluidem.Providers.Postgresql\Fluidem.Providers.Postgresql.csproj" />
+    </ItemGroup>
+    
 </Project>

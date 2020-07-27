@@ -5,10 +5,11 @@ namespace Fluidem.Sample.WebApi.Controllers
     public class TestExceptionController : Controller
     {
         // GET
-        [HttpGet("api/testException")]
+        [HttpGet("api/exception-test")]
         public IActionResult Index()
         {
-            int.Parse("PRUEBA");
+            int.Parse("parse exception");
+            
             return Ok("OK");
         }
     }
