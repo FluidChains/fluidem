@@ -37,7 +37,7 @@ namespace Fluidem.Core
                             StatusCode = context.Response.StatusCode,
                             Message = contextFeature.Error.Message,
                             StackTrace = contextFeature.Error.StackTrace,
-                            TimeUtc = DateTime.UtcNow
+                            TimeUtc = DateTimeOffset.UtcNow
                         };
                         var provider = context.RequestServices.GetService<IProvider>();
                         try
