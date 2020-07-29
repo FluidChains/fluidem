@@ -8,7 +8,7 @@ namespace Fluidem.Core
     public interface IProvider
     {
         public void BootstrapProvider();
-        public Task SaveExceptionAsync(ErrorDetail e);
+        public Task SaveExceptionAsync(ErrorDetail ex);
         public Task<IEnumerable<Error>> GetExceptionsAsync();
         public Task<ErrorDetail> GetExceptionAsync(Guid id);
     }

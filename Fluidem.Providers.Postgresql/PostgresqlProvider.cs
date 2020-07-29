@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Fluidem.Core;
 using Fluidem.Core.Models;
+using Fluidem.Core.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
@@ -18,7 +19,9 @@ namespace Fluidem.Providers.Postgresql
         private readonly FluidemOptions _options;
         private readonly ILogger<PostgresqlProvider> _logger;
 
-        public PostgresqlProvider(IDbConnection db, IOptions<FluidemOptions> options,
+        public PostgresqlProvider(
+            IDbConnection db, 
+            IOptions<FluidemOptions> options,
             ILogger<PostgresqlProvider> logger)
         {
             if (!(db is NpgsqlConnection))
@@ -53,7 +56,7 @@ namespace Fluidem.Providers.Postgresql
                     message	        VARCHAR NOT NULL,
                     stacktrace		VARCHAR NOT NULL,
                     time_utc		TIMESTAMP NOT NULL,
-                    detail_json     JSON
+                    detail_json     JSON NOT NULL
                 );
 
                 ALTER TABLE {tableName} ADD CONSTRAINT PK_{tableName} PRIMARY KEY (id);
@@ -65,12 +68,12 @@ namespace Fluidem.Providers.Postgresql
             _logger.LogInformation($"Table {tableName} created");
         }
 
-        public async Task SaveExceptionAsync(ErrorDetail exSave)
+        public async Task SaveExceptionAsync(ErrorDetail ex)
         {
             await _db.ExecuteScalarAsync<int>(
                 $@"INSERT INTO {_options.ErrorLogTableName} 
-                        (id, host, ""user"", exception_type, status_code, message, stacktrace, time_utc) 
-                        VALUES(@Id, @Host, @User, @ExceptionType, @StatusCode, @Message, @StackTrace, @TimeUtc)", exSave);
+            (id, host, ""user"", exception_type, status_code, message, stacktrace, time_utc, detail_json) 
+            VALUES(@Id, @Host, @User, @ExceptionType, @StatusCode, @Message, @StackTrace, @TimeUtc, JSON(@DetailJson))", ex);
         }
 
         public async Task<IEnumerable<Error>> GetExceptionsAsync()
@@ -84,11 +87,18 @@ namespace Fluidem.Providers.Postgresql
 
         public async Task<ErrorDetail> GetExceptionAsync(Guid id)
         {
-            return (await _db.QueryAsync<ErrorDetail>(
-                $@"SELECT id, host, ""user"", exception_type as ExceptionType, status_code StatusCode, 
-                        message, stacktrace, time_utc TimeUtc 
+            var ex = (await _db.QueryAsync<ErrorDetail>(
+                $@"SELECT id, host, ""user"", exception_type as ExceptionType, status_code as StatusCode, 
+                        message, stacktrace, time_utc TimeUtc, detail_json as DetailJson 
                        FROM {_options.ErrorLogTableName}
                        WHERE id = @id", new {id})).SingleOrDefault();
+            if (ex == null) return null;
+
+            _logger.LogWarning(ex.DetailJson);
+            
+            ex.Detail = JsonUtils.Deserialize<dynamic>(ex.DetailJson);
+
+            return ex;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using Fluidem.Core.Models;
+using Fluidem.Core.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,7 +51,8 @@ namespace Fluidem.Core.Builder
                             Source = baseException.Source,
                             TimeUtc = DateTimeOffset.UtcNow,
                             User = context.User.Claims
-                                .SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty
+                                .SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
+                            DetailJson = await ServerVariables.AsJson(context)
                         };
                         var provider = context.RequestServices.GetService<IProvider>();
                         try

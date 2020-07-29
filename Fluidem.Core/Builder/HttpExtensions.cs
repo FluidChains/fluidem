@@ -1,6 +1,5 @@
-using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Fluidem.Core.Utils;
 using Microsoft.AspNetCore.Http;
 
 namespace Fluidem.Core.Builder
@@ -10,14 +9,7 @@ namespace Fluidem.Core.Builder
         public static async Task WriteAsJsonAsync<T>(this HttpResponse response, T obj)
         {
             response.ContentType = "application/json";
-            await using var stream = new MemoryStream();
-            await JsonSerializer.SerializeAsync(stream, obj, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
-            stream.Position = 0;
-            using var reader = new StreamReader(stream);
-            var jsonText = await reader.ReadToEndAsync();
+            var jsonText = await JsonUtils.SerializeAsync(obj);
             await response.WriteAsync(jsonText);
         }
     }
