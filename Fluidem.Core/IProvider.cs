@@ -9,7 +9,7 @@ namespace Fluidem.Core
     {
         public void BootstrapProvider();
         public Task SaveExceptionAsync(ErrorDetail e);
-        public Task<IEnumerable<ErrorDetail>> GetExceptionsAsync();
+        public Task<IEnumerable<Error>> GetExceptionsAsync();
         public Task<ErrorDetail> GetExceptionAsync(Guid id);
     }
 }

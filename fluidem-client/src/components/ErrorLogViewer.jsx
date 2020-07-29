@@ -1,20 +1,50 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Route, Switch } from "react-router";
+import PropTypes from "prop-types";
 import ExceptionsList from "./ExceptionsList";
 import ExceptionDetail from "./ExceptionDetail";
-import { useLocation } from "react-router-dom";
 
-export const ErrorLogViewer = (props) => {
-  const location = useLocation();
-  const apiUrl = props.apiUrl;
-  const funException = props.handleException;
-
+const ErrorLogViewer = props => {
+  const { apiUrl, errorHandler } = props;
   return (
     <div>
       <Switch>
-        <Route path="**/exception-detail/:id" component={ExceptionDetail} />
-        <Route exact path="*" component={ExceptionsList} />
+        <Route
+          path="**/detail/:id"
+          render={cprops => (
+            <ExceptionDetail
+              {...cprops}
+              apiUrl={apiUrl}
+              errorHandler={errorHandler}
+            />
+          )}
+        />
+        <Route
+          exact
+          path="*"
+          render={cprops => (
+            <ExceptionsList
+              {...cprops}
+              apiUrl={apiUrl}
+              errorHandler={errorHandler}
+            />
+          )}
+        />
       </Switch>
     </div>
   );
 };
+
+ErrorLogViewer.propTypes = {
+  apiUrl: PropTypes.string,
+  errorHandler: PropTypes.func,
+};
+
+ErrorLogViewer.defaultProps = {
+  apiUrl: "api/error-log",
+  errorHandler: e => {
+    throw e;
+  },
+};
+
+export default ErrorLogViewer;

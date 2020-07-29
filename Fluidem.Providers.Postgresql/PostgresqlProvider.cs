@@ -47,11 +47,13 @@ namespace Fluidem.Providers.Postgresql
                 (
                     id		        UUID NOT NULL,
                     host 		    VARCHAR(50) NOT NULL,
-                    exception_type	VARCHAR(100),
-                    status_code		VARCHAR(500) NOT NULL,
+                    ""user""        VARCHAR(50) NOT NULL,
+                    exception_type	VARCHAR(50) NOT NULL,
+                    status_code		VARCHAR(10) NOT NULL,
                     message	        VARCHAR NOT NULL,
                     stacktrace		VARCHAR NOT NULL,
-                    time_utc		TIMESTAMP NOT NULL
+                    time_utc		TIMESTAMP NOT NULL,
+                    detail_json     JSON
                 );
 
                 ALTER TABLE {tableName} ADD CONSTRAINT PK_{tableName} PRIMARY KEY (id);
@@ -66,14 +68,16 @@ namespace Fluidem.Providers.Postgresql
         public async Task SaveExceptionAsync(ErrorDetail exSave)
         {
             await _db.ExecuteScalarAsync<int>(
-                $@"INSERT INTO {_options.ErrorLogTableName} (id, host, status_code, message, stacktrace, time_utc) 
-                        VALUES(@Id, @Host, @StatusCode, @Message, @StackTrace, @TimeUtc)", exSave);
+                $@"INSERT INTO {_options.ErrorLogTableName} 
+                        (id, host, ""user"", exception_type, status_code, message, stacktrace, time_utc) 
+                        VALUES(@Id, @Host, @User, @ExceptionType, @StatusCode, @Message, @StackTrace, @TimeUtc)", exSave);
         }
 
-        public async Task<IEnumerable<ErrorDetail>> GetExceptionsAsync()
+        public async Task<IEnumerable<Error>> GetExceptionsAsync()
         {
-            return await _db.QueryAsync<ErrorDetail>(
-                $@"SELECT id, host, status_code StatusCode, message, stacktrace, time_utc TimeUtc 
+            return await _db.QueryAsync<Error>(
+                $@"SELECT id, host, ""user"", exception_type as ExceptionType, status_code as StatusCode, 
+                        message, time_utc TimeUtc 
                        FROM {_options.ErrorLogTableName}
                        ORDER BY time_utc DESC");
         }
@@ -81,7 +85,8 @@ namespace Fluidem.Providers.Postgresql
         public async Task<ErrorDetail> GetExceptionAsync(Guid id)
         {
             return (await _db.QueryAsync<ErrorDetail>(
-                $@"SELECT id, host, status_code StatusCode, message, stacktrace, time_utc TimeUtc 
+                $@"SELECT id, host, ""user"", exception_type as ExceptionType, status_code StatusCode, 
+                        message, stacktrace, time_utc TimeUtc 
                        FROM {_options.ErrorLogTableName}
                        WHERE id = @id", new {id})).SingleOrDefault();
         }

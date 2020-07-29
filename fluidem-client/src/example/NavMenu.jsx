@@ -37,9 +37,7 @@ export class NavMenu extends Component {
           light
         >
           <Container>
-            <NavbarBrand  to="/">
-              ReactNet
-            </NavbarBrand>
+            <NavbarBrand to="/">ReactNet</NavbarBrand>
             <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
             <Collapse
               className="d-sm-inline-flex flex-sm-row-reverse"

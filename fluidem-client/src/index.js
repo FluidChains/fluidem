@@ -1,3 +1,3 @@
 import "./custom.css";
 
-export { ErrorLogViewer } from "./components/ErrorLogViewer";
+export { default as ErrorLogViewer } from "./components/ErrorLogViewer";
