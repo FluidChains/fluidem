@@ -43,9 +43,15 @@ const ExceptionsList = () => {
 
   const loadExceptions = async () => {
     if (!loading) setLoading(true);
-    const resp = await fetch(`api/list-exceptions?page=${this.state.page}`);
+    const resp = await fetch(`api/list-exceptions?page=${this.state.page}`)
+                    .then(function(response) {
+                      console.log("ok");
+                  }).catch(function(error) {
+                      console.log(error);
+                  });
     const data = await resp.json();
 
+    const lng = data.infExceptions.length
     setLoading(false);
     setExceptions(data.infExceptions);
   };

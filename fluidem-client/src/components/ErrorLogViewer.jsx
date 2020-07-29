@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Switch } from "react-router";
 import ExceptionsList from "./ExceptionsList";
 import ExceptionDetail from "./ExceptionDetail";
 import { useLocation } from "react-router-dom";
 
-export const ErrorLogViewer = () => {
+export const ErrorLogViewer = (props) => {
   const location = useLocation();
-  console.log(location);
+  const apiUrl = props.apiUrl;
+  const funException = props.handleException;
+
   return (
     <div>
       <Switch>
