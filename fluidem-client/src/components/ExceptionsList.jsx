@@ -4,35 +4,39 @@ import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import moment from "moment";
 
-const renderTableExceptions = (list, baseUrl) => {
+const renderTableExceptions = (list, baseUrl, loadExceptions) => {
   return (
-    <table className="table table-sm table-striped">
-      <thead>
-        <tr>
-          <th>Host</th>
-          <th>Code</th>
-          <th>Type</th>
-          <th>Error</th>
-          <th>User</th>
-          <th>When</th>
-        </tr>
-      </thead>
-      <tbody>
-        {list.map(ex => (
-          <tr key={ex.id}>
-            <td>{ex.host}</td>
-            <td>{ex.statusCode}</td>
-            <td>{ex.exceptionType}</td>
-            <td>
-              <Link to={`${baseUrl}/detail/${ex.id}`}>Detail</Link> |{" "}
-              {ex.message}
-            </td>
-            <th>{ex.user}</th>
-            <td>{moment(ex.timeUtc).calendar()}</td>
+    <React.Fragment>
+      <p className="float-left">All exceptions of serve</p>
+      <button className="btn btn-info mb-2 mt-0 float-right" onClick={loadExceptions}>Refresh</button>
+      <table className="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th>Host</th>
+            <th>Code</th>
+            <th>Type</th>
+            <th>Error</th>
+            <th>User</th>
+            <th>When</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {list.map(ex => (
+            <tr key={ex.id}>
+              <td>{ex.host}</td>
+              <td>{ex.statusCode}</td>
+              <td>{ex.exceptionType}</td>
+              <td>
+                <Link to={`${baseUrl}/detail/${ex.id}`}>Detail</Link> |{" "}
+                {ex.message}
+              </td>
+              <th>{ex.user}</th>
+              <td>{moment(ex.timeUtc).calendar()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </React.Fragment>
   );
 };
 
@@ -65,12 +69,11 @@ const ExceptionsList = props => {
       </div>
     </div>
   ) : (
-    renderTableExceptions(listExceptions, location.pathname)
+    renderTableExceptions(listExceptions, location.pathname, loadExceptions)
   );
   return (
     <div className="row">
       <div className="col-12">
-        <p>All Exceptions of serve</p>
         {contents}
       </div>
     </div>
