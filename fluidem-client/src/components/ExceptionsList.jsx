@@ -35,6 +35,7 @@ const renderTableExceptions = list => {
 
 const ExceptionsList = () => {
   const [loading, setLoading] = useState(true);
+  const [listExceptions, setExceptions] = useState([]);
   const location = useLocation();
   useEffect(() => {
     // loadExceptions();
@@ -44,11 +45,9 @@ const ExceptionsList = () => {
     if (!loading) setLoading(true);
     const resp = await fetch(`api/list-exceptions?page=${this.state.page}`);
     const data = await resp.json();
-    this.setState({
-      listExceptions: data.infExceptions,
-      loading: false,
-    });
-    setLoading(true);
+
+    setLoading(false);
+    setExceptions(data.infExceptions);
   };
 
   let contents = loading ? (
@@ -59,7 +58,7 @@ const ExceptionsList = () => {
       </div>
     </div>
   ) : (
-    renderTableExceptions(this.state.listExceptions)
+    renderTableExceptions(listExceptions)
   );
   return (
     <div className="row">
