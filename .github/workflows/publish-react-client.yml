@@ -17,9 +17,16 @@ jobs:
         node-version: '12.x'
         registry-url: 'https://npm.pkg.github.com'
         # Defaults to the user or organization that owns the workflow file
-        # scope: '@octocat'
-    - run: cd fluidem-clients/fluidem-react
-    - run: npm install
-    - run: npm publish
+        # scope: '@FluidChains'
+    - name: Copy npmrc      
+      run: cp $NPM_CONFIG_USERCONFIG fluidem-clients/fluidem-react
+    - name: Install Dependencies 
+      run: |
+        cd fluidem-clients/fluidem-react
+        npm install
+    - name: Publish Package
+      run: |
+        cd fluidem-clients/fluidem-react
+        npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

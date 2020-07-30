@@ -21,7 +21,7 @@ jobs:
         PROJECT_FILE_PATH: Fluidem.Core/Fluidem.Core.csproj
         # NuGet package id, used for version detection & defaults to project name
         # PACKAGE_NAME: # optional
-        VERSION_FILE_PATH: Directory.Build.props
+        VERSION_FILE_PATH: Fluidem.Core/Directory.Build.props
         NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
         NUGET_SOURCE: https://nuget.pkg.github.com
         # Regex pattern to extract version info in a capturing group
