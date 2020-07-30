@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
@@ -11,12 +12,12 @@ namespace Fluidem.Core.Utils
     {
         public static async Task<string> AsJson(HttpContext context)
         {
-            var variablesCollection = GetServerVariables(context); 
+            var variablesCollection = GetServerVariables(context);
             var variablesDic = variablesCollection.AllKeys.ToDictionary(
                 key => key, k => variablesCollection[k]);
             return await JsonUtils.SerializeAsync(variablesDic);
         }
- 
+
         // Taken from elmah core
         public static NameValueCollection GetServerVariables(HttpContext context)
         {
@@ -34,16 +35,8 @@ namespace Fluidem.Core.Utils
 
         public static void LoadVariables(NameValueCollection serverVariables, Func<object> getObject, string prefix)
         {
-            object obj;
-            try
-            {
-                obj = getObject();
-                if (obj == null) return;
-            }
-            catch
-            {
-                return;
-            }
+            var obj = getObject();
+            if (obj == null) return;
 
             var props = obj.GetType().GetProperties();
             foreach (var prop in props)
@@ -82,14 +75,16 @@ namespace Fluidem.Core.Utils
 
                             if (keyProp == null || valueProp == null) continue;
                             isProcessed = true;
-                            var val = valueProp.GetValue(item);
-                            if (val.GetType().ToString() == val.ToString()) continue;
+                            var valueObj = valueProp.GetValue(item);
+                            var valueString = valueObj.ToString();
+                            var keyString = keyProp.GetValue(item).ToString();
+                            if (valueObj.GetType().ToString() == valueString || keyString == "Authorization") continue;
                             var prfix2 =
                                 prop.Name.StartsWith("RequestHeaders",
                                     StringComparison.InvariantCultureIgnoreCase)
                                     ? "Header_"
                                     : prop.Name + "_";
-                            serverVariables.Add(prefix + prfix2 + keyProp.GetValue(item), val.ToString());
+                            serverVariables.Add(prefix + prfix2 + keyString, valueString);
                         }
                         catch
                         {

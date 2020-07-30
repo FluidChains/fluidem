@@ -94,8 +94,6 @@ namespace Fluidem.Providers.Postgresql
                        WHERE id = @id", new {id})).SingleOrDefault();
             if (ex == null) return null;
 
-            _logger.LogWarning(ex.DetailJson);
-            
             ex.Detail = JsonUtils.Deserialize<dynamic>(ex.DetailJson);
 
             return ex;

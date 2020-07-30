@@ -7,8 +7,13 @@ import moment from "moment";
 const renderTableExceptions = (list, baseUrl, loadExceptions) => {
   return (
     <React.Fragment>
-      <p className="float-left">All exceptions of serve</p>
-      <button className="btn btn-info mb-2 mt-0 float-right" onClick={loadExceptions}>Refresh</button>
+      <p className="float-left">Server exceptions</p>
+      <button
+        className="btn btn-info mb-2 mt-0 float-right"
+        onClick={loadExceptions}
+      >
+        Refresh
+      </button>
       <table className="table table-sm table-striped">
         <thead>
           <tr>
@@ -73,9 +78,7 @@ const ExceptionsList = props => {
   );
   return (
     <div className="row">
-      <div className="col-12">
-        {contents}
-      </div>
+      <div className="col-12">{contents}</div>
     </div>
   );
 };
