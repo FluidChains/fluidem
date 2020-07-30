@@ -1,5 +1,5 @@
 {
-  "name": "fluidem-react",
+  "name": "@fluidchains/fluidem-react",
   "version": "1.0.0",
   "private": false,
   "dependencies": {
