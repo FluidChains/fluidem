@@ -5,6 +5,7 @@ on:
       - '**'
     tags:
       - 'react-v*.*.*'
+  workflow_dispatch:
         
 jobs:
   build:
