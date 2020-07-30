@@ -5,6 +5,7 @@ on:
       - '**'
     tags:
       - 'react-v*.*.*'
+  workflow_dispatch:
         
 jobs:
   build:
@@ -19,7 +20,9 @@ jobs:
         # Defaults to the user or organization that owns the workflow file
         # scope: '@FluidChains'
     - name: Copy npmrc      
-      run: cp $NPM_CONFIG_USERCONFIG fluidem-clients/fluidem-react
+      run: |
+        cat $NPM_CONFIG_USERCONFIG
+        cp $NPM_CONFIG_USERCONFIG fluidem-clients/fluidem-react
     - name: Install Dependencies 
       run: |
         cd fluidem-clients/fluidem-react
