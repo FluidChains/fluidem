@@ -21,6 +21,7 @@ jobs:
     - name: Copy npmrc
       #run: cp .npmrc fluidem-clients/fluidem-react
       run: | 
+        cat $NPM_CONFIG_USERCONFIG
         ls -a
         cp .npmrc fluidem-clients/fluidem-react
     - name: Install Dependencies 
