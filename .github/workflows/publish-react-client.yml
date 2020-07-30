@@ -18,8 +18,7 @@ jobs:
         registry-url: 'https://npm.pkg.github.com'
         # Defaults to the user or organization that owns the workflow file
         # scope: '@octocat'
-    - run: cd fluidem-clients/fluidem-react
-    - run: npm install
-    - run: npm publish
+    - run: cd fluidem-clients/fluidem-react && npm install
+    - run: cd fluidem-clients/fluidem-react && npm publish    
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
